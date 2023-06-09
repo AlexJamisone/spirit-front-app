@@ -23,7 +23,7 @@ const Home: NextPage = () => {
 			<SignedOut>
 				<AnimataedLayout
 					container={{
-						w: '100vw',
+						w: '10vw',
 						h: '100vh',
 					}}
 					delay={0}

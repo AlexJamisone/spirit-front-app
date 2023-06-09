@@ -3,6 +3,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { type AppType } from 'next/app';
 import { theme } from '~/chakra/theme';
 import { ruRU } from '~/localization/ru';
+import '~/styles/global.css';
 import { api } from '~/utils/api';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
