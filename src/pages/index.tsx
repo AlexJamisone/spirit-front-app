@@ -1,9 +1,10 @@
 import { Button } from '@chakra-ui/react';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import AnimataedLayout from '~/components/AnimataedLayout';
+import Main from '~/ui/Main/Main';
 
 const Home: NextPage = () => {
 	return (
@@ -14,7 +15,10 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<SignedIn>
-				<UserButton afterSignOutUrl="/signin" />
+				<Main
+					user={<Main.User afterSignOutUrl="/signin" />}
+					categorys={<Main.Categorys />}
+				/>
 			</SignedIn>
 			<SignedOut>
 				<AnimataedLayout
