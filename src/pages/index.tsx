@@ -22,6 +22,7 @@ const Home: NextPage = () => {
 						w: '100vw',
 						h: '100vh',
 					}}
+					delay={0}
 				>
 					<Button
 						as={Link}
