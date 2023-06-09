@@ -7,7 +7,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 	return (
 		<ChakraProvider>
 			<ClerkProvider {...pageProps}>
-				<Component {...pageProps} />;
+				<Component {...pageProps} />
 			</ClerkProvider>
 		</ChakraProvider>
 	);
