@@ -1,12 +1,13 @@
-import { Center } from '@chakra-ui/react';
+import { Center, CenterProps } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 type AnimataedLayoutProps = {
 	children: ReactNode;
+	container?: CenterProps;
 };
 
-const AnimataedLayout = ({ children }: AnimataedLayoutProps) => {
+const AnimataedLayout = ({ children, container }: AnimataedLayoutProps) => {
 	return (
 		<Center
 			as={motion.div}
@@ -23,6 +24,7 @@ const AnimataedLayout = ({ children }: AnimataedLayoutProps) => {
 					delay: 0.5,
 				},
 			}}
+			{...container}
 		>
 			{children}
 		</Center>

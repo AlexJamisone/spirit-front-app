@@ -3,7 +3,12 @@ import AnimataedLayout from '~/components/AnimataedLayout';
 
 const SignInPage = () => {
 	return (
-		<AnimataedLayout>
+		<AnimataedLayout
+			container={{
+				w: '100vw',
+				h: '100vh',
+			}}
+		>
 			<SignIn
 				afterSignInUrl={'/'}
 				afterSignUpUrl={'/'}
