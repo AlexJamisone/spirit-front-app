@@ -6,13 +6,20 @@ export const categorysRouter = createTRPCRouter({
 			include: {
 				subCategory: {
 					include: {
-						product: true,
+						product: {
+							include: {
+								priceHistory: true,
+								size: true,
+							},
+						},
 					},
 				},
 				product: {
 					include: {
 						category: true,
 						subCategory: true,
+						priceHistory: true,
+						size: true,
 					},
 				},
 			},

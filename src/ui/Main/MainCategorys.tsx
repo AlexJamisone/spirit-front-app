@@ -7,20 +7,31 @@ import MainCard from '../../components/MainCard';
 const MainCategorys = () => {
 	const { data: categorys, isLoading } = api.categorys.get.useQuery();
 	const { dispatch, state } = useMainContext();
-
 	const handlDrugEnd = (
 		e: TouchEvent | MouseEvent | PointerEvent,
 		info: PanInfo
 	) => {
 		if (info.offset.x > 100) {
-			dispatch({
-				type: 'SET_ALL',
-				payload: {
-					...state,
-					subcat: false,
-					cat: true,
-				},
-			});
+			if (state.isProductCat) {
+				dispatch({
+					type: 'SET_ALL',
+					payload: {
+						...state,
+						isProductCat: false,
+						cat: true,
+					},
+				});
+			} else {
+				dispatch({
+					type: 'SET_ALL',
+					payload: {
+						...state,
+						subcat: false,
+						cat: true,
+						isProductSub: false,
+					},
+				});
+			}
 		}
 	};
 	const Container = chakra(motion.div);
@@ -51,13 +62,18 @@ const MainCategorys = () => {
 			justifyContent="center"
 			flexWrap="wrap"
 			flexDirection="row"
-			drag={state.subcat ? 'x' : false}
+			drag={
+				state.subcat || state.isProductCat || state.isProductSub
+					? 'x'
+					: false
+			}
 			dragConstraints={{ right: 0, left: 0 }}
 			dragElastic={0.8}
 			onDragEnd={
-				state.subcat || state.isProductSub ? handlDrugEnd : undefined
+				state.subcat || state.isProductSub || state.isProductCat
+					? handlDrugEnd
+					: undefined
 			}
-			key={123}
 		>
 			{categorys.map((category, index) =>
 				state.cat ? (
@@ -133,7 +149,10 @@ const MainCategorys = () => {
 							index={index}
 							product={product}
 							onClick={() => {
-								console.log('prod');
+								dispatch({
+									type: 'SET_SELECT_SIZE',
+									payload: true,
+								});
 							}}
 						/>
 					))

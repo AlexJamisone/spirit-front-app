@@ -8,7 +8,10 @@ export type ControlState = {
 	products: {
 		id: string;
 		quantity: number;
+		sizeId: string;
+		size: string;
 	}[];
+	selectSize: boolean;
 };
 
 interface SetCatIdAction {
@@ -32,6 +35,8 @@ interface SetProductAction {
 	payload: {
 		id: string;
 		quantity: number;
+		sizeId: string;
+		size: string;
 	};
 }
 interface SetProductUpdateAction {
@@ -39,6 +44,8 @@ interface SetProductUpdateAction {
 	payload: {
 		id: string;
 		quantity: number;
+		sizeId: string;
+		size: string;
 	};
 }
 interface SetRemoveProductAction {
@@ -57,6 +64,10 @@ interface SetIsProductCatAction {
 	type: 'SET_IS_PROD_CAT';
 	payload: boolean;
 }
+interface SetSelectSizeAction {
+	type: 'SET_SELECT_SIZE';
+	payload: boolean;
+}
 
 export type Action =
 	| SetCatAction
@@ -68,7 +79,8 @@ export type Action =
 	| SetProductUpdateAction
 	| SetAllAction
 	| SetIsProductSubAction
-	| SetIsProductCatAction;
+	| SetIsProductCatAction
+	| SetSelectSizeAction;
 
 export const initial: ControlState = {
 	cat: true,
@@ -78,6 +90,7 @@ export const initial: ControlState = {
 	catId: '',
 	subcatId: '',
 	products: [],
+	selectSize: false,
 };
 
 export const controlsReducer = (
@@ -95,12 +108,15 @@ export const controlsReducer = (
 			return { ...state, subcatId: action.payload };
 		case 'SET_PRODUCT_ADD': {
 			const findProduct = state.products.find(
-				({ id }) => id === action.payload.id
+				({ id, sizeId }) =>
+					id === action.payload.id && sizeId === action.payload.sizeId
 			);
 			if (!findProduct) {
 				const newProduct = {
 					id: action.payload.id,
 					quantity: 1,
+					sizeId: action.payload.sizeId,
+					size: action.payload.size,
 				};
 				return {
 					...state,
@@ -110,10 +126,12 @@ export const controlsReducer = (
 				const product = {
 					id: findProduct.id,
 					quantity: findProduct.quantity + 1,
+					sizeId: findProduct.sizeId,
+					size: findProduct.size,
 				};
 				return {
 					...state,
-					products: [...state.products, product],
+					products: [product],
 				};
 			}
 		}
@@ -135,7 +153,8 @@ export const controlsReducer = (
 		}
 		case 'SET_PRODUCT_UPDATE': {
 			const findProduct = state.products.find(
-				({ id }) => id === action.payload.id
+				({ id, sizeId }) =>
+					id === action.payload.id && sizeId === action.payload.sizeId
 			);
 			if (!findProduct && action.payload.quantity < 1) {
 				return state;
@@ -147,6 +166,8 @@ export const controlsReducer = (
 						{
 							id: findProduct?.id as string,
 							quantity: action.payload.quantity,
+							sizeId: action.payload.sizeId,
+							size: action.payload.size,
 						},
 					],
 				};
@@ -161,6 +182,8 @@ export const controlsReducer = (
 			return { ...state, isProductSub: action.payload };
 		case 'SET_IS_PROD_CAT':
 			return { ...state, isProductCat: action.payload };
+		case 'SET_SELECT_SIZE':
+			return { ...state, selectSize: action.payload };
 		default:
 			return state;
 	}
