@@ -1,3 +1,15 @@
+export type ProductItems = {
+	id: string;
+	quantity: number;
+	sizeId: string;
+	size: string;
+};
+
+interface Product {
+	items: ProductItems[];
+	totalSum: number;
+}
+
 export type ControlState = {
 	cat: boolean;
 	subcat: boolean;
@@ -5,13 +17,11 @@ export type ControlState = {
 	isProductCat: boolean;
 	catId: string;
 	subcatId: string;
-	products: {
-		id: string;
-		quantity: number;
-		sizeId: string;
-		size: string;
-	}[];
-	selectSize: boolean;
+	products: Product;
+	sizeControl: {
+		productId: string;
+		selectSize: boolean;
+	};
 };
 
 interface SetCatIdAction {
@@ -37,6 +47,7 @@ interface SetProductAction {
 		quantity: number;
 		sizeId: string;
 		size: string;
+		price: number;
 	};
 }
 interface SetProductUpdateAction {
@@ -46,11 +57,12 @@ interface SetProductUpdateAction {
 		quantity: number;
 		sizeId: string;
 		size: string;
+		price: number;
 	};
 }
 interface SetRemoveProductAction {
 	type: 'REMOVE_PRODUCT';
-	payload: { id: string };
+	payload: { id: string; price: number };
 }
 interface SetAllAction {
 	type: 'SET_ALL';
@@ -66,7 +78,10 @@ interface SetIsProductCatAction {
 }
 interface SetSelectSizeAction {
 	type: 'SET_SELECT_SIZE';
-	payload: boolean;
+	payload: {
+		productId: string;
+		selectSize: boolean;
+	};
 }
 
 export type Action =
@@ -89,8 +104,14 @@ export const initial: ControlState = {
 	isProductCat: false,
 	catId: '',
 	subcatId: '',
-	products: [],
-	selectSize: false,
+	products: {
+		items: [],
+		totalSum: 0,
+	},
+	sizeControl: {
+		productId: '',
+		selectSize: false,
+	},
 };
 
 export const controlsReducer = (
@@ -107,7 +128,7 @@ export const controlsReducer = (
 		case 'SET_SUBCAT_ID':
 			return { ...state, subcatId: action.payload };
 		case 'SET_PRODUCT_ADD': {
-			const findProduct = state.products.find(
+			const findProduct = state.products.items.find(
 				({ id, sizeId }) =>
 					id === action.payload.id && sizeId === action.payload.sizeId
 			);
@@ -120,39 +141,60 @@ export const controlsReducer = (
 				};
 				return {
 					...state,
-					products: [...state.products, newProduct],
+					products: {
+						items: [...state.products.items, newProduct],
+						totalSum:
+							state.products.totalSum + action.payload.price,
+					},
 				};
 			} else {
-				const product = {
-					id: findProduct.id,
-					quantity: findProduct.quantity + 1,
-					sizeId: findProduct.sizeId,
-					size: findProduct.size,
-				};
+				const updatedItems = state.products.items.map((item) => {
+					if (
+						item.id === findProduct.id &&
+						item.sizeId === findProduct.sizeId
+					) {
+						return {
+							...item,
+							quantity: item.quantity + 1,
+						};
+					}
+					return item;
+				});
 				return {
 					...state,
-					products: [product],
+					products: {
+						items: updatedItems,
+						totalSum:
+							state.products.totalSum + action.payload.price,
+					},
 				};
 			}
 		}
 		case 'REMOVE_PRODUCT': {
-			const findProduct = state.products.find(
+			const findProduct = state.products.items.find(
 				({ id }) => id === action.payload.id
 			);
 			if (!findProduct) {
 				return state;
 			} else {
-				const updateProduct = state.products.filter(
+				const updatedItems = state.products.items.filter(
 					({ id }) => id !== action.payload.id
+				);
+				const totalSum = updatedItems.reduce(
+					(sum, item) => sum + item.quantity * action.payload.price,
+					0
 				);
 				return {
 					...state,
-					products: updateProduct,
+					products: {
+						items: updatedItems,
+						totalSum: totalSum,
+					},
 				};
 			}
 		}
 		case 'SET_PRODUCT_UPDATE': {
-			const findProduct = state.products.find(
+			const findProduct = state.products.items.find(
 				({ id, sizeId }) =>
 					id === action.payload.id && sizeId === action.payload.sizeId
 			);
@@ -161,15 +203,18 @@ export const controlsReducer = (
 			} else {
 				return {
 					...state,
-					products: [
-						...state.products,
-						{
-							id: findProduct?.id as string,
-							quantity: action.payload.quantity,
-							sizeId: action.payload.sizeId,
-							size: action.payload.size,
-						},
-					],
+					products: {
+						items: [
+							...state.products.items,
+							{
+								id: findProduct?.id as string,
+								quantity: action.payload.quantity,
+								sizeId: action.payload.sizeId,
+								size: action.payload.size,
+							},
+						],
+						totalSum: 0,
+					},
 				};
 			}
 		}
@@ -183,7 +228,13 @@ export const controlsReducer = (
 		case 'SET_IS_PROD_CAT':
 			return { ...state, isProductCat: action.payload };
 		case 'SET_SELECT_SIZE':
-			return { ...state, selectSize: action.payload };
+			return {
+				...state,
+				sizeControl: {
+					productId: action.payload.productId,
+					selectSize: action.payload.selectSize,
+				},
+			};
 		default:
 			return state;
 	}

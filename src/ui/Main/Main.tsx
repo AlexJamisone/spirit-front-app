@@ -8,8 +8,9 @@ import MainCategorys from './MainCategorys';
 type MainProps = {
 	user?: ReactNode;
 	categorys?: ReactNode;
+	checkout?: ReactNode;
 };
-const Main = ({ user, categorys }: MainProps) => {
+const Main = ({ user, categorys, checkout }: MainProps) => {
 	const [state, dispatch] = useReducer(controlsReducer, initial);
 	return (
 		<MainContext.Provider
@@ -30,6 +31,7 @@ const Main = ({ user, categorys }: MainProps) => {
 						{user}
 					</Stack>
 					{categorys}
+					{checkout}
 				</Stack>
 			</AnimataedLayout>
 		</MainContext.Provider>

@@ -8,8 +8,16 @@ export const categorysRouter = createTRPCRouter({
 					include: {
 						product: {
 							include: {
-								priceHistory: true,
-								size: true,
+								priceHistory: {
+									orderBy: {
+										effectiveFrom: 'desc',
+									},
+								},
+								quantity: {
+									include: {
+										size: true,
+									},
+								},
 							},
 						},
 					},
@@ -18,8 +26,16 @@ export const categorysRouter = createTRPCRouter({
 					include: {
 						category: true,
 						subCategory: true,
-						priceHistory: true,
-						size: true,
+						priceHistory: {
+							orderBy: {
+								effectiveFrom: 'desc',
+							},
+						},
+						quantity: {
+							include: {
+								size: true,
+							},
+						},
 					},
 				},
 			},

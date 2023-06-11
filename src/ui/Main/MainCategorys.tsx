@@ -1,8 +1,10 @@
 import { Center, Spinner, Text, chakra } from '@chakra-ui/react';
 import { motion, type PanInfo } from 'framer-motion';
+import React from 'react';
 import { useMainContext } from '~/context/mainContext';
 import { api } from '~/utils/api';
 import MainCard from '../../components/MainCard';
+import SizeModal from '../../components/SizeModal';
 
 const MainCategorys = () => {
 	const { data: categorys, isLoading } = api.categorys.get.useQuery();
@@ -41,8 +43,7 @@ const MainCategorys = () => {
 				<Spinner size={'lg'} />
 			</Center>
 		);
-	if (categorys?.length === 0 || !categorys)
-		return <Text>Нет категорий</Text>;
+	if (!categorys || categorys.length === 0) return <Text>Нет категорий</Text>;
 	return (
 		<Container
 			gap={3}
@@ -75,12 +76,12 @@ const MainCategorys = () => {
 					: undefined
 			}
 		>
-			{categorys.map((category, index) =>
+			{categorys.map((category) =>
 				state.cat ? (
 					<MainCard
 						key={category.id}
 						category={category}
-						index={index}
+						product={undefined}
 						onClick={() => {
 							if (category.subCategory.length === 0) {
 								dispatch({
@@ -109,11 +110,10 @@ const MainCategorys = () => {
 				) : state.subcat ? (
 					category.subCategory
 						.filter((cat) => cat.categoryId === state.catId)
-						.map((subCategory, index) => (
+						.map((subCategory) => (
 							<MainCard
 								key={subCategory.id}
 								category={subCategory}
-								index={index}
 								onClick={() => {
 									dispatch({
 										type: 'SET_ALL',
@@ -130,31 +130,49 @@ const MainCategorys = () => {
 				) : state.isProductSub ? (
 					category.subCategory
 						.filter((subcat) => subcat.id === state.subcatId)
-						.map((subCategory, index) => {
+						.map((subCategory) => {
 							return subCategory.product.map((product) => (
-								<MainCard
-									key={product.id}
-									product={product}
-									index={index}
-									onClick={() => {
-										console.log('prod');
-									}}
-								/>
+								<React.Fragment key={product.id}>
+									<MainCard
+										product={product}
+										onClick={() => {
+											dispatch({
+												type: 'SET_SELECT_SIZE',
+												payload: {
+													productId: product.id,
+													selectSize: true,
+												},
+											});
+										}}
+									/>
+									<SizeModal
+										quantity={product.quantity}
+										product={product}
+									/>
+								</React.Fragment>
 							));
 						})
 				) : state.isProductCat ? (
-					category.product.map((product, index) => (
-						<MainCard
-							key={product.categoryTitle}
-							index={index}
-							product={product}
-							onClick={() => {
-								dispatch({
-									type: 'SET_SELECT_SIZE',
-									payload: true,
-								});
-							}}
-						/>
+					category.product.map((product) => (
+						<React.Fragment key={product.id}>
+							<MainCard
+								key={product.id}
+								product={product}
+								onClick={() => {
+									dispatch({
+										type: 'SET_SELECT_SIZE',
+										payload: {
+											productId: product.id,
+											selectSize: true,
+										},
+									});
+								}}
+							/>
+							<SizeModal
+								quantity={product.quantity}
+								product={product}
+							/>
+						</React.Fragment>
 					))
 				) : null
 			)}
