@@ -13,7 +13,6 @@ import Succsess from './Succsess';
 const MainCategorys = () => {
 	const { data: main, isLoading } = api.categorys.get.useQuery();
 	const [state, dispatch] = useReducer(controlsReducer, initial);
-	console.log(state);
 	const handlDrugEnd = (
 		e: TouchEvent | MouseEvent | PointerEvent,
 		info: PanInfo
@@ -121,7 +120,6 @@ const MainCategorys = () => {
 												cat: false,
 												subcat: true,
 												catId: category.id,
-												isProductSub: true,
 											},
 										});
 									}
@@ -141,8 +139,8 @@ const MainCategorys = () => {
 										payload: {
 											...state,
 											subcat: false,
-											isProductSub: true,
 											subcatId: subCategory.id,
+											isProductSub: true,
 										},
 									});
 								}}

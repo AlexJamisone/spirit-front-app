@@ -134,7 +134,24 @@ export type Action =
 	| SetSuccsessAction
 	| SetClearAction;
 
-export const initial: ControlState = {
+const local_key = 'interface';
+
+const getItemsFromLocalStorage = (): ControlState | null => {
+	if (typeof window !== 'undefined' && window.localStorage) {
+		const itemJSON = window.localStorage.getItem(local_key);
+		if (itemJSON) {
+			return JSON.parse(itemJSON) as ControlState;
+		}
+	}
+	return null;
+};
+const saveItemsToLocalStorage = (item: ControlState) => {
+	if (typeof window !== 'undefined' && window.localStorage) {
+		window.localStorage.setItem(local_key, JSON.stringify(item));
+	}
+};
+
+export const initial: ControlState = getItemsFromLocalStorage() || {
 	cat: true,
 	subcat: false,
 	isProductSub: false,
@@ -160,14 +177,26 @@ export const controlsReducer = (
 	action: Action
 ): ControlState => {
 	switch (action.type) {
-		case 'SET_CAT':
-			return { ...state, cat: action.payload };
-		case 'SET_SUB_CAT':
-			return { ...state, subcat: action.payload };
-		case 'SET_CAT_ID':
-			return { ...state, catId: action.payload };
-		case 'SET_SUBCAT_ID':
-			return { ...state, subcatId: action.payload };
+		case 'SET_CAT': {
+			const newState = { ...state, cat: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_SUB_CAT': {
+			const newState = { ...state, subcat: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_CAT_ID': {
+			const newState = { ...state, catId: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_SUBCAT_ID': {
+			const newState = { ...state, subcatId: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
 		case 'SET_PRODUCT_ADD': {
 			const findProduct = state.products.items.find(
 				({ id, qtId }) =>
@@ -182,7 +211,7 @@ export const controlsReducer = (
 					price: action.payload.price,
 					name: action.payload.name,
 				};
-				return {
+				const newState = {
 					...state,
 					products: {
 						items: [...state.products.items, newProduct],
@@ -190,6 +219,8 @@ export const controlsReducer = (
 							state.products.totalSum + action.payload.price,
 					},
 				};
+				saveItemsToLocalStorage(newState);
+				return newState;
 			} else {
 				const updatedItems = state.products.items.map((item) => {
 					if (
@@ -203,7 +234,7 @@ export const controlsReducer = (
 					}
 					return item;
 				});
-				return {
+				const newState = {
 					...state,
 					products: {
 						items: updatedItems,
@@ -211,6 +242,8 @@ export const controlsReducer = (
 							state.products.totalSum + action.payload.price,
 					},
 				};
+				saveItemsToLocalStorage(newState);
+				return newState;
 			}
 		}
 		case 'REMOVE_PRODUCT_ONE': {
@@ -224,7 +257,7 @@ export const controlsReducer = (
 					({ id, qtId }) =>
 						id !== action.payload.id || qtId !== action.payload.qtId
 				);
-				return {
+				const newState = {
 					...state,
 					products: {
 						items: updatedItems,
@@ -234,6 +267,8 @@ export const controlsReducer = (
 						),
 					},
 				};
+				saveItemsToLocalStorage(newState);
+				return newState;
 			}
 		}
 		case 'REMOVE_PRODUCT_ALL': {
@@ -246,7 +281,7 @@ export const controlsReducer = (
 				const updatedItems = state.products.items.filter(
 					({ id }) => id !== action.payload.id
 				);
-				return {
+				const newState = {
 					...state,
 					products: {
 						items: updatedItems,
@@ -256,6 +291,8 @@ export const controlsReducer = (
 						),
 					},
 				};
+				saveItemsToLocalStorage(newState);
+				return newState;
 			}
 		}
 		case 'SET_PRODUCT_UPDATE': {
@@ -278,7 +315,7 @@ export const controlsReducer = (
 					}
 					return item;
 				});
-				return {
+				const newState = {
 					...state,
 					products: {
 						items: updatedItems,
@@ -288,35 +325,61 @@ export const controlsReducer = (
 						),
 					},
 				};
+				saveItemsToLocalStorage(newState);
+				return newState;
 			}
 		}
-		case 'SET_ALL':
-			return {
+		case 'SET_ALL': {
+			const newState = {
 				...state,
 				...action.payload,
 			};
-		case 'SET_IS_PROD_SUB':
-			return { ...state, isProductSub: action.payload };
-		case 'SET_IS_PROD_CAT':
-			return { ...state, isProductCat: action.payload };
-		case 'SET_SELECT_SIZE':
-			return {
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_IS_PROD_SUB': {
+			const newState = { ...state, isProductSub: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_IS_PROD_CAT': {
+			const newState = { ...state, isProductCat: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_SELECT_SIZE': {
+			const newState = {
 				...state,
 				sizeControl: {
 					productId: action.payload.productId,
 					selectSize: action.payload.selectSize,
 				},
 			};
-		case 'SET_IS_CHECK':
-			return { ...state, isCheckout: action.payload };
-		case 'SET_CHECK':
-			return { ...state, check: action.payload };
-		case 'SET_EMAIL':
-			return { ...state, email: action.payload };
-		case 'SET_SUCCSESS':
-			return { ...state, success: action.payload };
-		case 'SET_CLEAR':
-			return {
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_IS_CHECK': {
+			const newState = { ...state, isCheckout: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_CHECK': {
+			const newState = { ...state, check: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_EMAIL': {
+			const newState = { ...state, email: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_SUCCSESS': {
+			const newState = { ...state, success: action.payload };
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
+		case 'SET_CLEAR': {
+			const newState = {
 				cat: true,
 				catId: '',
 				check: false,
@@ -336,6 +399,9 @@ export const controlsReducer = (
 				subcatId: '',
 				success: false,
 			};
+			saveItemsToLocalStorage(newState);
+			return newState;
+		}
 		default:
 			return state;
 	}

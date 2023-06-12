@@ -1,4 +1,4 @@
-import { Center, Image } from '@chakra-ui/react';
+import { Center } from '@chakra-ui/react';
 
 interface EmailProps {
 	src: string;
@@ -7,7 +7,7 @@ interface EmailProps {
 const Email = ({ src }: EmailProps) => {
 	return (
 		<Center>
-			<Image src={src} alt="check" />
+			<img src={src} alt="check" />
 		</Center>
 	);
 };
