@@ -8,9 +8,47 @@ import {
 } from '@chakra-ui/react';
 import { MdArrowBackIos } from 'react-icons/md';
 import { useMainContext } from '~/context/mainContext';
+import { api } from '~/utils/api';
 
 const CheckoutAction = () => {
 	const { dispatch, state } = useMainContext();
+	const { mutate: pay, isLoading } = api.checks.create.useMutation();
+	const ctx = api.useContext();
+	const handlPay = () => {
+		pay(
+			{
+				check: state.check,
+				items: state.products.items,
+				totalSum: state.products.totalSum,
+				email: state.email,
+			},
+			{
+				onSuccess: () => {
+					void ctx.checks.invalidate();
+					dispatch({
+						type: 'SET_ALL',
+						payload: {
+							...state,
+							cat: false,
+							catId: '',
+							check: false,
+							email: '',
+							isCheckout: false,
+							isProductCat: false,
+							isProductSub: false,
+							sizeControl: {
+								productId: '',
+								selectSize: false,
+							},
+							subcat: false,
+							subcatId: '',
+							success: true,
+						},
+					});
+				},
+			}
+		);
+	};
 	return (
 		<Stack
 			position="fixed"
@@ -45,7 +83,12 @@ const CheckoutAction = () => {
 			)}
 			{state.isCheckout && (
 				<ButtonGroup isAttached size="lg" colorScheme="green" w="90%">
-					<Button w="90%" borderRight="1px">
+					<Button
+						isLoading={isLoading}
+						onClick={handlPay}
+						w="90%"
+						borderRight="1px"
+					>
 						Оплатить
 					</Button>
 					<IconButton

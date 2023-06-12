@@ -27,6 +27,7 @@ export type ControlState = {
 	isCheckout: boolean;
 	check: boolean;
 	email: string;
+	success: boolean;
 };
 
 interface SetCatIdAction {
@@ -106,6 +107,13 @@ interface SetEmailAction {
 	type: 'SET_EMAIL';
 	payload: string;
 }
+interface SetSuccsessAction {
+	type: 'SET_SUCCSESS';
+	payload: boolean;
+}
+interface SetClearAction {
+	type: 'SET_CLEAR';
+}
 
 export type Action =
 	| SetCatAction
@@ -122,7 +130,9 @@ export type Action =
 	| SetChekoutAction
 	| SetCheckAction
 	| SetEmailAction
-	| SetRemoveProductAllAction;
+	| SetRemoveProductAllAction
+	| SetSuccsessAction
+	| SetClearAction;
 
 export const initial: ControlState = {
 	cat: true,
@@ -142,6 +152,7 @@ export const initial: ControlState = {
 	isCheckout: false,
 	check: false,
 	email: '',
+	success: false,
 };
 
 export const controlsReducer = (
@@ -302,6 +313,29 @@ export const controlsReducer = (
 			return { ...state, check: action.payload };
 		case 'SET_EMAIL':
 			return { ...state, email: action.payload };
+		case 'SET_SUCCSESS':
+			return { ...state, success: action.payload };
+		case 'SET_CLEAR':
+			return {
+				cat: true,
+				catId: '',
+				check: false,
+				email: '',
+				isCheckout: false,
+				isProductCat: false,
+				isProductSub: false,
+				products: {
+					items: [],
+					totalSum: 0,
+				},
+				sizeControl: {
+					productId: '',
+					selectSize: false,
+				},
+				subcat: false,
+				subcatId: '',
+				success: false,
+			};
 		default:
 			return state;
 	}

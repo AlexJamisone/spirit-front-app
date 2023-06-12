@@ -7,10 +7,11 @@ import type { ProductItems } from '~/recducer/controlReducer';
 type CheckoutStickProps = {
 	product: ProductItems;
 	index: number;
+	delay?: number;
 };
 
-const CheckoutStick = ({ product, index }: CheckoutStickProps) => {
-	const { dispatch } = useMainContext();
+const CheckoutStick = ({ product, index, delay }: CheckoutStickProps) => {
+	const { dispatch, state } = useMainContext();
 	const { id, name, price, quantity, size, qtId } = product;
 	const handlButton = (operation: 'plus' | 'minus') => {
 		return (
@@ -65,7 +66,7 @@ const CheckoutStick = ({ product, index }: CheckoutStickProps) => {
 				transition: {
 					type: 'spring',
 					duration: 0.9 * index,
-					delay: 0.2,
+					delay: delay ?? 0.2,
 				},
 			}}
 			exit={{
@@ -74,9 +75,12 @@ const CheckoutStick = ({ product, index }: CheckoutStickProps) => {
 		>
 			<Text fontSize="small">{name}</Text>
 			<Stack direction="row" alignItems="center">
-				{handlButton('minus')}
-				<Text>{quantity}</Text>
-				{handlButton('plus')}
+				{!state.success && handlButton('minus')}
+				<Text>
+					{state.success && 'x'}
+					{quantity}
+				</Text>
+				{!state.success && handlButton('plus')}
 			</Stack>
 			<Tag>{size}</Tag>
 			<Text>{price} ₽</Text>

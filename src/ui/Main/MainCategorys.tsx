@@ -8,11 +8,12 @@ import { api } from '~/utils/api';
 import MainCard from '../../components/MainCard';
 import Checkout from '../Checkout/Checkout';
 import CheckoutAction from '../Checkout/CheckoutAction';
+import Succsess from './Succsess';
 
 const MainCategorys = () => {
 	const { data: main, isLoading } = api.categorys.get.useQuery();
 	const [state, dispatch] = useReducer(controlsReducer, initial);
-
+	console.log(state);
 	const handlDrugEnd = (
 		e: TouchEvent | MouseEvent | PointerEvent,
 		info: PanInfo
@@ -199,8 +200,11 @@ const MainCategorys = () => {
 							</React.Fragment>
 						))}
 			</Container>
+			{state.success && <Succsess />}
 			<Stack mx={5}>{state.isCheckout && <Checkout />}</Stack>
-			{state.products.items.length !== 0 && <CheckoutAction />}
+			{state.products.items.length !== 0 && !state.success && (
+				<CheckoutAction />
+			)}
 		</MainContext.Provider>
 	);
 };
