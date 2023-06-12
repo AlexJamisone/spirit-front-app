@@ -164,6 +164,31 @@ model Accordion {
     updateAt  DateTime @updatedAt
 }
 
+model Check {
+    id          String         @id @default(cuid())
+    checkNumber Int            @default(autoincrement())
+    content     CheckContent[]
+    status      CheckStatus
+    totalSum    Int
+    createdAt   DateTime       @default(now())
+    updateAt    DateTime       @updatedAt
+}
+
+model CheckContent {
+    id       String @id @default(cuid())
+    checkId  String
+    check    Check  @relation(fields: [checkId], references: [id], onDelete: Cascade)
+    name     String
+    size     String
+    quantity Int
+    price    Int
+}
+
+enum CheckStatus {
+    COMPLETED
+    CANCELLED
+}
+
 enum Role {
     USER
     ADMIN

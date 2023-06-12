@@ -26,9 +26,10 @@ const CheckoutStick = ({ product, index }: CheckoutStickProps) => {
 				onClick={() => {
 					if (quantity === 1 && operation === 'minus') {
 						dispatch({
-							type: 'REMOVE_PRODUCT',
+							type: 'REMOVE_PRODUCT_ONE',
 							payload: {
 								id,
+								qtId,
 							},
 						});
 					} else {

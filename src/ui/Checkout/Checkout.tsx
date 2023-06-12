@@ -13,6 +13,7 @@ import CheckoutStick from './CheckoutStick';
 
 const Checkout = () => {
 	const { state, dispatch } = useMainContext();
+
 	return (
 		<Stack gap={5} justifyContent="center">
 			<AnimatePresence>

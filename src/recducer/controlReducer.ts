@@ -67,8 +67,12 @@ interface SetProductUpdateAction {
 		name: string;
 	};
 }
-interface SetRemoveProductAction {
-	type: 'REMOVE_PRODUCT';
+interface SetRemoveProductOneAction {
+	type: 'REMOVE_PRODUCT_ONE';
+	payload: { id: string; qtId: string };
+}
+interface SetRemoveProductAllAction {
+	type: 'REMOVE_PRODUCT_ALL';
 	payload: { id: string };
 }
 interface SetAllAction {
@@ -109,7 +113,7 @@ export type Action =
 	| SetSubCatAction
 	| SetSubCatIdAction
 	| SetProductAction
-	| SetRemoveProductAction
+	| SetRemoveProductOneAction
 	| SetProductUpdateAction
 	| SetAllAction
 	| SetIsProductSubAction
@@ -117,7 +121,8 @@ export type Action =
 	| SetSelectSizeAction
 	| SetChekoutAction
 	| SetCheckAction
-	| SetEmailAction;
+	| SetEmailAction
+	| SetRemoveProductAllAction;
 
 export const initial: ControlState = {
 	cat: true,
@@ -197,7 +202,30 @@ export const controlsReducer = (
 				};
 			}
 		}
-		case 'REMOVE_PRODUCT': {
+		case 'REMOVE_PRODUCT_ONE': {
+			const findProduct = state.products.items.find(
+				({ id }) => id === action.payload.id
+			);
+			if (!findProduct) {
+				return state;
+			} else {
+				const updatedItems = state.products.items.filter(
+					({ id, qtId }) =>
+						id !== action.payload.id || qtId !== action.payload.qtId
+				);
+				return {
+					...state,
+					products: {
+						items: updatedItems,
+						totalSum: updatedItems.reduce(
+							(sum, item) => sum + item.quantity * item.price,
+							0
+						),
+					},
+				};
+			}
+		}
+		case 'REMOVE_PRODUCT_ALL': {
 			const findProduct = state.products.items.find(
 				({ id }) => id === action.payload.id
 			);

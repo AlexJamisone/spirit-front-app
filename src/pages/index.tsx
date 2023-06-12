@@ -1,8 +1,9 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Stack } from '@chakra-ui/react';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import Logo from '~/assets/Logo';
 import AnimataedLayout from '~/components/AnimataedLayout';
 import Main from '~/ui/Main/Main';
 
@@ -23,19 +24,26 @@ const Home: NextPage = () => {
 			<SignedOut>
 				<AnimataedLayout
 					container={{
-						w: '10vw',
 						h: '100vh',
 					}}
 					delay={0}
 				>
-					<Button
-						as={Link}
-						href="/signin"
-						colorScheme="telegram"
-						w="2xs"
-					>
-						Войти
-					</Button>
+					<Stack alignItems="center" justifyContent="center">
+						<Logo
+							iconProps={{
+								boxSize: 32,
+								fill: 'blackAlpha.700',
+							}}
+						/>
+						<Button
+							as={Link}
+							href="/signin"
+							colorScheme="telegram"
+							w="2xs"
+						>
+							Войти
+						</Button>
+					</Stack>
 				</AnimataedLayout>
 			</SignedOut>
 		</>

@@ -113,7 +113,7 @@ const MainCard = ({ category, onClick, product }: MainCardProps) => {
 					right={3}
 					onClick={(e) => {
 						dispatch({
-							type: 'REMOVE_PRODUCT',
+							type: 'REMOVE_PRODUCT_ALL',
 							payload: {
 								id: product?.id as string,
 							},
