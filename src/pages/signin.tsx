@@ -9,11 +9,7 @@ const SignInPage = () => {
 				h: '100vh',
 			}}
 		>
-			<SignIn
-				afterSignInUrl={'/'}
-				afterSignUpUrl={'/'}
-				signUpUrl="/signup"
-			/>
+			<SignIn signUpUrl="/signup" afterSignInUrl="/" />
 		</AnimataedLayout>
 	);
 };
