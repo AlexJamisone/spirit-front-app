@@ -1,8 +1,10 @@
 export type ProductItems = {
 	id: string;
 	quantity: number;
-	sizeId: string;
+	qtId: string;
 	size: string;
+	price: number;
+	name: string;
 };
 
 interface Product {
@@ -22,6 +24,9 @@ export type ControlState = {
 		productId: string;
 		selectSize: boolean;
 	};
+	isCheckout: boolean;
+	check: boolean;
+	email: string;
 };
 
 interface SetCatIdAction {
@@ -45,9 +50,10 @@ interface SetProductAction {
 	payload: {
 		id: string;
 		quantity: number;
-		sizeId: string;
+		qtId: string;
 		size: string;
 		price: number;
+		name: string;
 	};
 }
 interface SetProductUpdateAction {
@@ -55,14 +61,15 @@ interface SetProductUpdateAction {
 	payload: {
 		id: string;
 		quantity: number;
-		sizeId: string;
+		qtId: string;
 		size: string;
 		price: number;
+		name: string;
 	};
 }
 interface SetRemoveProductAction {
 	type: 'REMOVE_PRODUCT';
-	payload: { id: string; price: number };
+	payload: { id: string };
 }
 interface SetAllAction {
 	type: 'SET_ALL';
@@ -83,6 +90,18 @@ interface SetSelectSizeAction {
 		selectSize: boolean;
 	};
 }
+interface SetChekoutAction {
+	type: 'SET_IS_CHECK';
+	payload: boolean;
+}
+interface SetCheckAction {
+	type: 'SET_CHECK';
+	payload: boolean;
+}
+interface SetEmailAction {
+	type: 'SET_EMAIL';
+	payload: string;
+}
 
 export type Action =
 	| SetCatAction
@@ -95,7 +114,10 @@ export type Action =
 	| SetAllAction
 	| SetIsProductSubAction
 	| SetIsProductCatAction
-	| SetSelectSizeAction;
+	| SetSelectSizeAction
+	| SetChekoutAction
+	| SetCheckAction
+	| SetEmailAction;
 
 export const initial: ControlState = {
 	cat: true,
@@ -112,6 +134,9 @@ export const initial: ControlState = {
 		productId: '',
 		selectSize: false,
 	},
+	isCheckout: false,
+	check: false,
+	email: '',
 };
 
 export const controlsReducer = (
@@ -129,15 +154,17 @@ export const controlsReducer = (
 			return { ...state, subcatId: action.payload };
 		case 'SET_PRODUCT_ADD': {
 			const findProduct = state.products.items.find(
-				({ id, sizeId }) =>
-					id === action.payload.id && sizeId === action.payload.sizeId
+				({ id, qtId }) =>
+					id === action.payload.id && qtId === action.payload.qtId
 			);
 			if (!findProduct) {
 				const newProduct = {
 					id: action.payload.id,
 					quantity: 1,
-					sizeId: action.payload.sizeId,
+					qtId: action.payload.qtId,
 					size: action.payload.size,
+					price: action.payload.price,
+					name: action.payload.name,
 				};
 				return {
 					...state,
@@ -151,7 +178,7 @@ export const controlsReducer = (
 				const updatedItems = state.products.items.map((item) => {
 					if (
 						item.id === findProduct.id &&
-						item.sizeId === findProduct.sizeId
+						item.qtId === findProduct.qtId
 					) {
 						return {
 							...item,
@@ -180,40 +207,46 @@ export const controlsReducer = (
 				const updatedItems = state.products.items.filter(
 					({ id }) => id !== action.payload.id
 				);
-				const totalSum = updatedItems.reduce(
-					(sum, item) => sum + item.quantity * action.payload.price,
-					0
-				);
 				return {
 					...state,
 					products: {
 						items: updatedItems,
-						totalSum: totalSum,
+						totalSum: updatedItems.reduce(
+							(sum, item) => sum + item.quantity * item.price,
+							0
+						),
 					},
 				};
 			}
 		}
 		case 'SET_PRODUCT_UPDATE': {
 			const findProduct = state.products.items.find(
-				({ id, sizeId }) =>
-					id === action.payload.id && sizeId === action.payload.sizeId
+				({ id, qtId }) =>
+					id === action.payload.id && qtId === action.payload.qtId
 			);
 			if (!findProduct && action.payload.quantity < 1) {
 				return state;
 			} else {
+				const updatedItems = state.products.items.map((item) => {
+					if (
+						item.id === findProduct?.id &&
+						item.qtId === findProduct.qtId
+					) {
+						return {
+							...item,
+							quantity: action.payload.quantity,
+						};
+					}
+					return item;
+				});
 				return {
 					...state,
 					products: {
-						items: [
-							...state.products.items,
-							{
-								id: findProduct?.id as string,
-								quantity: action.payload.quantity,
-								sizeId: action.payload.sizeId,
-								size: action.payload.size,
-							},
-						],
-						totalSum: 0,
+						items: updatedItems,
+						totalSum: updatedItems.reduce(
+							(sum, item) => sum + item.quantity * item.price,
+							0
+						),
 					},
 				};
 			}
@@ -235,6 +268,12 @@ export const controlsReducer = (
 					selectSize: action.payload.selectSize,
 				},
 			};
+		case 'SET_IS_CHECK':
+			return { ...state, isCheckout: action.payload };
+		case 'SET_CHECK':
+			return { ...state, check: action.payload };
+		case 'SET_EMAIL':
+			return { ...state, email: action.payload };
 		default:
 			return state;
 	}

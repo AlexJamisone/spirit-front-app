@@ -103,13 +103,14 @@ const SizeModal = ({ quantity, product }: SizeModalProps) => {
 											dispatch({
 												type: 'SET_PRODUCT_ADD',
 												payload: {
-													sizeId: size.id,
+													qtId: id,
 													id: product.id,
 													quantity: 1,
 													size: size.size,
 													price: product
 														.priceHistory[0]
 														?.price as number,
+													name: product.name,
 												},
 											});
 											dispatch({

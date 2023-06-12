@@ -116,8 +116,6 @@ const MainCard = ({ category, onClick, product }: MainCardProps) => {
 							type: 'REMOVE_PRODUCT',
 							payload: {
 								id: product?.id as string,
-								price: product?.priceHistory[0]
-									?.price as number,
 							},
 						});
 						e.stopPropagation();
