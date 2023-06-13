@@ -49,14 +49,14 @@ const Checkout = () => {
 							type: 'SET_CTRL',
 							payload: {
 								...control,
-								check: e.target.checked,
+								checkNeed: e.target.checked,
 							},
 						})
 					}
-					isChecked={control.check}
+					isChecked={control.checkNeed}
 				/>
 			</FormControl>
-			{control.check && (
+			{control.checkNeed && (
 				<FormControl>
 					<FormLabel>На какой email отправить?</FormLabel>
 					<Input

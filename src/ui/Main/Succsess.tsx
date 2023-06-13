@@ -70,7 +70,15 @@ const Succsess = () => {
 					colorScheme="linkedin"
 					onClick={() => {
 						dispatchCtrl({ type: 'INITIAL' });
-						dispatchItems({ type: 'INITIAL' });
+						dispatchItems({
+							type: 'INITIAL',
+							payload: {
+								products: {
+									items: [],
+									totalSum: 0,
+								},
+							},
+						});
 					}}
 				>
 					На главный экран

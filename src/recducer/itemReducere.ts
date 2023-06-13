@@ -49,6 +49,7 @@ interface SetDeletAllAction {
 
 interface SetInitial {
 	type: 'INITIAL';
+	payload: ItemState;
 }
 
 export type Action =
@@ -216,8 +217,15 @@ export const itemReducer = (state: ItemState, action: Action): ItemState => {
 				return newState;
 			}
 		}
-		case 'INITIAL':
-			return initial;
+		case 'INITIAL': {
+			saveItemsToLocalStorage(action.payload);
+			return {
+				products: {
+					items: [],
+					totalSum: 0,
+				},
+			};
+		}
 		default:
 			return state;
 	}

@@ -1,4 +1,4 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Button, Stack, Text } from '@chakra-ui/react';
 import { UserButton } from '@clerk/nextjs';
 import { useReducer, type ReactNode } from 'react';
 import AnimataedLayout from '~/components/AnimataedLayout';
@@ -7,13 +7,15 @@ import { controlsReducer, initial } from '~/recducer/controlReducer';
 import { initial as initialItems, itemReducer } from '~/recducer/itemReducere';
 import Checkout from '../Checkout/Checkout';
 import CheckoutAction from '../Checkout/CheckoutAction';
+import Checks from '../Checks/Checks';
 import MainCategorys from './MainCategorys';
 import Succsess from './Succsess';
 type MainProps = {
 	user?: ReactNode;
 	categorys?: ReactNode;
+	checks?: ReactNode;
 };
-const Main = ({ user, categorys }: MainProps) => {
+const Main = ({ user, categorys, checks }: MainProps) => {
 	const [controls, dispatchCtrl] = useReducer(controlsReducer, initial);
 	const [items, dispatchItems] = useReducer(itemReducer, initialItems);
 	const { control } = controls;
@@ -33,11 +35,42 @@ const Main = ({ user, categorys }: MainProps) => {
 						direction="row"
 						justifyContent="space-between"
 						m={5}
+						alignItems="center"
+						// position='fixed'
+						// top={0}
+						// zIndex={99}
 					>
 						<Text>Выручка за сегодня</Text>
+						<Button
+							onClick={() => {
+								dispatchCtrl({
+									type: 'SET_CTRL',
+									payload: {
+										...control,
+										checks: !control.checks,
+										cat: control.checks ? true : false,
+										checkNeed: false,
+										isCheckout: false,
+										isProductCat: false,
+										isProductSub: false,
+										sizeControl: {
+											productId: '',
+											selectSize: false,
+										},
+										subcat: false,
+										success: false,
+									},
+								});
+							}}
+							colorScheme="telegram"
+							size="sm"
+						>
+							{control.checks ? 'На главный' : 'Чеки'}
+						</Button>
 						{user}
 					</Stack>
 					{categorys}
+					{control.checks && checks}
 					{control.success && <Succsess />}
 					<Stack mx={5}>{control.isCheckout && <Checkout />}</Stack>
 					{items.products.items.length !== 0 && !control.success && (
@@ -51,5 +84,6 @@ const Main = ({ user, categorys }: MainProps) => {
 
 Main.User = UserButton;
 Main.Categorys = MainCategorys;
+Main.Checks = Checks;
 
 export default Main;

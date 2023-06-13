@@ -168,7 +168,7 @@ model Check {
     id          String         @id @default(cuid())
     checkNumber Int            @default(autoincrement())
     content     CheckContent[]
-    status      CheckStatus @default(COMPLETED)
+    status      CheckStatus    @default(COMPLETED)
     totalSum    Int
     createdAt   DateTime       @default(now())
     updateAt    DateTime       @updatedAt
@@ -181,6 +181,7 @@ model CheckContent {
     name     String
     size     String
     quantity Int
+    qtId     String
     price    Int
 }
 

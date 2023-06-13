@@ -9,8 +9,9 @@ export type ControlState = {
 			selectSize: boolean;
 		};
 		isCheckout: boolean;
-		check: boolean;
+		checkNeed: boolean;
 		success: boolean;
+		checks: boolean;
 	};
 	catId: string;
 	subcatId: string;
@@ -42,8 +43,9 @@ interface SetControls {
 			selectSize: boolean;
 		};
 		isCheckout: boolean;
-		check: boolean;
+		checkNeed: boolean;
 		success: boolean;
+		checks: boolean;
 	};
 }
 
@@ -67,7 +69,7 @@ export type Action =
 export const initial: ControlState = {
 	control: {
 		cat: true,
-		check: false,
+		checkNeed: false,
 		isCheckout: false,
 		isProductCat: false,
 		isProductSub: false,
@@ -77,6 +79,7 @@ export const initial: ControlState = {
 		},
 		subcat: false,
 		success: false,
+		checks: false,
 	},
 	catId: '',
 	email: '',

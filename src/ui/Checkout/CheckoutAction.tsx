@@ -19,7 +19,7 @@ const CheckoutAction = () => {
 	const handlPay = () => {
 		pay(
 			{
-				check: control.check,
+				check: control.checkNeed,
 				items: products.items,
 				totalSum: products.totalSum,
 				email: controls.email,
@@ -32,7 +32,7 @@ const CheckoutAction = () => {
 						payload: {
 							control: {
 								...control,
-								check: false,
+								checkNeed: false,
 								isCheckout: false,
 								success: true,
 							},

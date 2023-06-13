@@ -19,6 +19,7 @@ const Home: NextPage = () => {
 				<Main
 					user={<Main.User afterSignOutUrl="/signin" />}
 					categorys={<Main.Categorys />}
+					checks={<Main.Checks />}
 				/>
 			</SignedIn>
 			<SignedOut>

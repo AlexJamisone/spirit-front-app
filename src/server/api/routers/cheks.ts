@@ -1,7 +1,10 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import { z } from 'zod';
 import { adminProcedure, createTRPCRouter } from '~/server/api/trpc';
 import { resend } from '~/server/resend';
 import Email from '~/ui/Email/Email';
+dayjs.locale('ru');
 
 export const checksRouter = createTRPCRouter({
 	get: adminProcedure.query(async ({ ctx }) => {
@@ -9,11 +12,51 @@ export const checksRouter = createTRPCRouter({
 			orderBy: {
 				createdAt: 'desc',
 			},
+			where: {
+				createdAt: {
+					gte: dayjs().startOf('day').toDate(),
+					lte: dayjs().endOf('day').toDate(),
+				},
+			},
 			include: {
 				content: true,
 			},
 		});
 	}),
+	changeStatus: adminProcedure
+		.input(
+			z.object({
+				idCheck: z.string(),
+				products: z.array(
+					z.object({
+						qtId: z.string(),
+						quantity: z.number(),
+					})
+				),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			input.products.map(async ({ qtId, quantity }) => {
+				return await ctx.prisma.quantity.update({
+					where: {
+						id: qtId,
+					},
+					data: {
+						value: {
+							increment: quantity,
+						},
+					},
+				});
+			});
+			return await ctx.prisma.check.update({
+				where: {
+					id: input.idCheck,
+				},
+				data: {
+					status: 'CANCELLED',
+				},
+			});
+		}),
 	create: adminProcedure
 		.input(
 			z.object({
@@ -56,11 +99,12 @@ export const checksRouter = createTRPCRouter({
 				});
 			});
 			const check = input.items.map(
-				({ name, price, quantity, size }) => ({
+				({ name, price, quantity, size, qtId }) => ({
 					name,
 					price,
 					quantity,
 					size,
+					qtId,
 				})
 			);
 			return await ctx.prisma.check.create({
