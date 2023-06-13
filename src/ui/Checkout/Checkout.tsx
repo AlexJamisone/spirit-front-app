@@ -12,12 +12,12 @@ import { useMainContext } from '~/context/mainContext';
 import CheckoutStick from './CheckoutStick';
 
 const Checkout = () => {
-	const { state, dispatch } = useMainContext();
-
+	const { controls, items, dispatchCtrl } = useMainContext();
+	const [{ control }, { products }] = [controls, items];
 	return (
 		<Stack gap={5} justifyContent="center">
 			<AnimatePresence>
-				{state.products.items.map((product, index) => (
+				{products.items.map((product, index) => (
 					<CheckoutStick
 						index={index}
 						product={product}
@@ -33,7 +33,7 @@ const Checkout = () => {
 				fontWeight={600}
 			>
 				<Text>Итог: </Text>
-				<Text>{state.products.totalSum} ₽</Text>
+				<Text>{products.totalSum} ₽</Text>
 			</Stack>
 			<FormControl
 				as={Stack}
@@ -45,26 +45,29 @@ const Checkout = () => {
 				<Switch
 					id="check"
 					onChange={(e) =>
-						dispatch({
-							type: 'SET_CHECK',
-							payload: e.target.checked,
+						dispatchCtrl({
+							type: 'SET_CTRL',
+							payload: {
+								...control,
+								check: e.target.checked,
+							},
 						})
 					}
-					isChecked={state.check}
+					isChecked={control.check}
 				/>
 			</FormControl>
-			{state.check && (
+			{control.check && (
 				<FormControl>
 					<FormLabel>На какой email отправить?</FormLabel>
 					<Input
 						type="email"
 						onChange={(e) =>
-							dispatch({
+							dispatchCtrl({
 								type: 'SET_EMAIL',
 								payload: e.target.value,
 							})
 						}
-						value={state.email}
+						value={controls.email}
 					/>
 				</FormControl>
 			)}

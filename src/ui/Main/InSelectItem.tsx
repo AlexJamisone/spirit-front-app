@@ -1,5 +1,5 @@
 import { Stack, Text } from '@chakra-ui/react';
-import type { ProductItems } from '~/recducer/controlReducer';
+import type { ProductItems } from '~/recducer/itemReducere';
 
 type InSelectItemProps = {
 	inCartItems: ProductItems;

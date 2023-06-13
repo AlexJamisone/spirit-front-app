@@ -1,9 +1,12 @@
 import { createContext, useContext, type Dispatch } from 'react';
 import type { Action, ControlState } from '~/recducer/controlReducer';
+import type { Action as ActionItems, ItemState } from '~/recducer/itemReducere';
 
 export interface MainContext {
-	state: ControlState;
-	dispatch: Dispatch<Action>;
+	controls: ControlState;
+	dispatchCtrl: Dispatch<Action>;
+	items: ItemState;
+	dispatchItems: Dispatch<ActionItems>;
 }
 
 const MainContext = createContext<MainContext | null>(null);

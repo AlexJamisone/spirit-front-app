@@ -28,19 +28,23 @@ type SizeModalProps = {
 };
 
 const SizeModal = ({ quantity, product }: SizeModalProps) => {
-	const { state, dispatch } = useMainContext();
+	const { controls, dispatchCtrl, dispatchItems } = useMainContext();
+	const { control } = controls;
 	return (
 		<Modal
 			isOpen={
-				state.sizeControl.selectSize &&
-				state.sizeControl.productId === product.id
+				control.sizeControl.selectSize &&
+				control.sizeControl.productId === product.id
 			}
 			onClose={() => {
-				dispatch({
-					type: 'SET_SELECT_SIZE',
+				dispatchCtrl({
+					type: 'SET_CTRL',
 					payload: {
-						selectSize: false,
-						productId: '',
+						...control,
+						sizeControl: {
+							selectSize: false,
+							productId: '',
+						},
 					},
 				});
 			}}
@@ -100,8 +104,8 @@ const SizeModal = ({ quantity, product }: SizeModalProps) => {
 										}
 										size="sm"
 										onClick={() => {
-											dispatch({
-												type: 'SET_PRODUCT_ADD',
+											dispatchItems({
+												type: 'SET_ADD',
 												payload: {
 													qtId: id,
 													id: product.id,
@@ -113,11 +117,14 @@ const SizeModal = ({ quantity, product }: SizeModalProps) => {
 													name: product.name,
 												},
 											});
-											dispatch({
-												type: 'SET_SELECT_SIZE',
+											dispatchCtrl({
+												type: 'SET_CTRL',
 												payload: {
-													selectSize: false,
-													productId: '',
+													...control,
+													sizeControl: {
+														selectSize: false,
+														productId: '',
+													},
 												},
 											});
 										}}

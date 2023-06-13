@@ -33,10 +33,9 @@ type MainCardProps = {
 };
 
 const MainCard = ({ category, onClick, product }: MainCardProps) => {
-	const { state, dispatch } = useMainContext();
-	const isInCart = state.products.items.some(
-		(item) => item.id === product?.id
-	);
+	const { items, dispatchItems } = useMainContext();
+	const { products } = items;
+	const isInCart = products.items.some((item) => item.id === product?.id);
 	return (
 		<Card
 			size="sm"
@@ -60,7 +59,7 @@ const MainCard = ({ category, onClick, product }: MainCardProps) => {
 		>
 			{product ? (
 				<Stack position="absolute" top={3} right={1} left={1}>
-					{state.products.items.map((inCartItems, index) =>
+					{products.items.map((inCartItems, index) =>
 						product.id === inCartItems.id ? (
 							<Stack
 								key={index}
@@ -112,8 +111,8 @@ const MainCard = ({ category, onClick, product }: MainCardProps) => {
 					bottom={3}
 					right={3}
 					onClick={(e) => {
-						dispatch({
-							type: 'REMOVE_PRODUCT_ALL',
+						dispatchItems({
+							type: 'DELET_ALL',
 							payload: {
 								id: product?.id as string,
 							},

@@ -11,38 +11,34 @@ import { useMainContext } from '~/context/mainContext';
 import { api } from '~/utils/api';
 
 const CheckoutAction = () => {
-	const { dispatch, state } = useMainContext();
+	const { items, controls, dispatchCtrl } = useMainContext();
 	const { mutate: pay, isLoading } = api.checks.create.useMutation();
+	const { products } = items;
+	const { control } = controls;
 	const ctx = api.useContext();
 	const handlPay = () => {
 		pay(
 			{
-				check: state.check,
-				items: state.products.items,
-				totalSum: state.products.totalSum,
-				email: state.email,
+				check: control.check,
+				items: products.items,
+				totalSum: products.totalSum,
+				email: controls.email,
 			},
 			{
 				onSuccess: () => {
 					void ctx.checks.invalidate();
-					dispatch({
+					dispatchCtrl({
 						type: 'SET_ALL',
 						payload: {
-							...state,
-							cat: false,
-							catId: '',
-							check: false,
-							email: '',
-							isCheckout: false,
-							isProductCat: false,
-							isProductSub: false,
-							sizeControl: {
-								productId: '',
-								selectSize: false,
+							control: {
+								...control,
+								check: false,
+								isCheckout: false,
+								success: true,
 							},
-							subcat: false,
+							catId: '',
+							email: '',
 							subcatId: '',
-							success: true,
 						},
 					});
 				},
@@ -57,16 +53,16 @@ const CheckoutAction = () => {
 			alignItems="center"
 			justifyContent="center"
 		>
-			{!state.isCheckout && (
-				<Text fontWeight={600}>Итог: {state.products.totalSum} ₽</Text>
+			{!control.isCheckout && (
+				<Text fontWeight={600}>Итог: {products.totalSum} ₽</Text>
 			)}
-			{!state.isCheckout && (
+			{!control.isCheckout && (
 				<Button
 					onClick={() => {
-						dispatch({
-							type: 'SET_ALL',
+						dispatchCtrl({
+							type: 'SET_CTRL',
 							payload: {
-								...state,
+								...control,
 								isCheckout: true,
 								cat: false,
 								isProductCat: false,
@@ -81,7 +77,7 @@ const CheckoutAction = () => {
 					К оплате
 				</Button>
 			)}
-			{state.isCheckout && (
+			{control.isCheckout && (
 				<ButtonGroup isAttached size="lg" colorScheme="green" w="90%">
 					<Button
 						isLoading={isLoading}
@@ -94,13 +90,16 @@ const CheckoutAction = () => {
 					<IconButton
 						aria-label="back"
 						onClick={() => {
-							dispatch({
+							dispatchCtrl({
 								type: 'SET_ALL',
 								payload: {
-									...state,
-									isCheckout: false,
+									...controls,
+									control: {
+										...control,
+										isCheckout: false,
+										cat: true,
+									},
 									email: '',
-									cat: true,
 								},
 							});
 						}}

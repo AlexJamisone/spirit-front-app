@@ -2,7 +2,7 @@ import { Icon, IconButton, Stack, Tag, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { GrFormNext, GrFormPrevious } from 'react-icons/gr';
 import { useMainContext } from '~/context/mainContext';
-import type { ProductItems } from '~/recducer/controlReducer';
+import type { ProductItems } from '~/recducer/itemReducere';
 
 type CheckoutStickProps = {
 	product: ProductItems;
@@ -11,7 +11,8 @@ type CheckoutStickProps = {
 };
 
 const CheckoutStick = ({ product, index, delay }: CheckoutStickProps) => {
-	const { dispatch, state } = useMainContext();
+	const { controls, dispatchItems } = useMainContext();
+	const { control } = controls;
 	const { id, name, price, quantity, size, qtId } = product;
 	const handlButton = (operation: 'plus' | 'minus') => {
 		return (
@@ -26,16 +27,16 @@ const CheckoutStick = ({ product, index, delay }: CheckoutStickProps) => {
 				}
 				onClick={() => {
 					if (quantity === 1 && operation === 'minus') {
-						dispatch({
-							type: 'REMOVE_PRODUCT_ONE',
+						dispatchItems({
+							type: 'DELET_ONE',
 							payload: {
 								id,
 								qtId,
 							},
 						});
 					} else {
-						dispatch({
-							type: 'SET_PRODUCT_UPDATE',
+						dispatchItems({
+							type: 'SET_UPDATE',
 							payload: {
 								id,
 								name,
@@ -75,12 +76,12 @@ const CheckoutStick = ({ product, index, delay }: CheckoutStickProps) => {
 		>
 			<Text fontSize="small">{name}</Text>
 			<Stack direction="row" alignItems="center">
-				{!state.success && handlButton('minus')}
+				{!control.success && handlButton('minus')}
 				<Text>
-					{state.success && 'x'}
+					{control.success && 'x'}
 					{quantity}
 				</Text>
-				{!state.success && handlButton('plus')}
+				{!control.success && handlButton('plus')}
 			</Stack>
 			<Tag>{size}</Tag>
 			<Text>{price} ₽</Text>

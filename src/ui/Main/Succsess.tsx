@@ -5,7 +5,8 @@ import AnimataedLayout from '~/components/AnimataedLayout';
 import { useMainContext } from '~/context/mainContext';
 import CheckoutStick from '../Checkout/CheckoutStick';
 const Succsess = () => {
-	const { dispatch, state } = useMainContext();
+	const { items, dispatchCtrl, dispatchItems } = useMainContext();
+	const { products } = items;
 	return (
 		<AnimataedLayout
 			container={{
@@ -34,7 +35,7 @@ const Succsess = () => {
 					Успешно оплачено!
 				</Text>
 				<Stack>
-					{state.products.items.map((product, index) => (
+					{products.items.map((product, index) => (
 						<CheckoutStick
 							key={product.id}
 							product={product}
@@ -48,7 +49,7 @@ const Succsess = () => {
 					textColor="blackAlpha.700"
 					fontSize="2xl"
 				>
-					{state.products.totalSum} ₽
+					{products.totalSum} ₽
 				</Text>
 				<Button
 					position="fixed"
@@ -67,7 +68,10 @@ const Succsess = () => {
 						},
 					}}
 					colorScheme="linkedin"
-					onClick={() => dispatch({ type: 'SET_CLEAR' })}
+					onClick={() => {
+						dispatchCtrl({ type: 'INITIAL' });
+						dispatchItems({ type: 'INITIAL' });
+					}}
 				>
 					На главный экран
 				</Button>
