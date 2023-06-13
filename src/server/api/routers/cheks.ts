@@ -118,4 +118,22 @@ export const checksRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getRevenue: adminProcedure.output(z.number()).query(async ({ ctx }) => {
+		const checks = await ctx.prisma.check.findMany({
+			where: {
+				createdAt: {
+					gte: dayjs().startOf('day').toDate(),
+					lte: dayjs().endOf('day').toDate(),
+				},
+				NOT: {
+					status: 'CANCELLED',
+				},
+			},
+		});
+		const sum: number = checks.reduce(
+			(acc, current) => acc + current.totalSum,
+			0
+		);
+		return sum;
+	}),
 });
