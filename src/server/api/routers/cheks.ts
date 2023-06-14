@@ -130,6 +130,7 @@ export const checksRouter = createTRPCRouter({
 				},
 			},
 		});
+		if (checks.length === 0) return 0;
 		const sum: number = checks.reduce(
 			(acc, current) => acc + current.totalSum,
 			0

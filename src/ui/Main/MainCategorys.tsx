@@ -93,7 +93,7 @@ const MainCategorys = () => {
 							key={category.id}
 							category={category}
 							onClick={() => {
-								if (category.subCategory.length === 0) {
+								if (category.subCategory === 0) {
 									dispatchCtrl({
 										type: 'SET_ALL',
 										payload: {

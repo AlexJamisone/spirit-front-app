@@ -78,9 +78,9 @@ const Main = ({ user, categorys, checks }: MainProps) => {
 					{control.checks && checks}
 					{control.success && <Succsess />}
 					<Stack mx={5}>{control.isCheckout && <Checkout />}</Stack>
-					{items.products.items.length !== 0 && !control.success && (
-						<CheckoutAction />
-					)}
+					{items.products.items.length !== 0 &&
+						!control.success &&
+						!control.checks && <CheckoutAction />}
 				</Stack>
 			</MainContext.Provider>
 		</AnimataedLayout>

@@ -63,9 +63,10 @@ const SizeModal = ({ quantity, product }: SizeModalProps) => {
 					<Stack
 						direction="row"
 						flexWrap="wrap"
-						gap={3}
+						gap={9}
 						justifyContent="center"
-						mb={4}
+						alignItems="center"
+						mb={7}
 					>
 						{quantity
 							.sort((a, b) =>
