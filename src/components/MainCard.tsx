@@ -11,8 +11,6 @@ import type {
 	Category,
 	Product,
 	ProductPriceHistory,
-	Quantity,
-	Size,
 	SubCategory,
 } from '@prisma/client';
 import { motion } from 'framer-motion';
@@ -25,9 +23,6 @@ type MainCardProps = {
 	category?: Category | SubCategory;
 	product?: Product & {
 		priceHistory: ProductPriceHistory[];
-		quantity: (Quantity & {
-			size: Size;
-		})[];
 	};
 	onClick: () => void;
 };

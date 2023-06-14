@@ -11,6 +11,7 @@ import Checks from '../Checks/Checks';
 import Revenue from '../Revenue/Revenue';
 import MainCategorys from './MainCategorys';
 import Succsess from './Succsess';
+
 type MainProps = {
 	user?: ReactNode;
 	categorys?: ReactNode;
@@ -46,6 +47,7 @@ const Main = ({ user, categorys, checks }: MainProps) => {
 						</Stack>
 						<Stack direction="row" gap={7}>
 							<Button
+								isDisabled={control.success}
 								onClick={() => {
 									dispatchCtrl({
 										type: 'SET_CTRL',

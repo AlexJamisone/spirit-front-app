@@ -10,8 +10,7 @@ const Succsess = () => {
 	return (
 		<AnimataedLayout
 			container={{
-				h: '50vh',
-				w: '100vw',
+				my: 'auto',
 			}}
 		>
 			<Stack alignItems="center" gap={3}>

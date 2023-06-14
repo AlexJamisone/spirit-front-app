@@ -7,7 +7,9 @@ import { api } from '~/utils/api';
 import MainCard from '../../components/MainCard';
 
 const MainCategorys = () => {
-	const { data: main, isLoading } = api.categorys.get.useQuery();
+	const { data: categorys, isLoading } = api.categorys.get.useQuery();
+	const { data: products } = api.products.get.useQuery();
+	const { data: subCategory } = api.subcat.get.useQuery();
 	const { controls, dispatchCtrl } = useMainContext();
 	const { control } = controls;
 	const handlDrugEnd = (
@@ -47,7 +49,10 @@ const MainCategorys = () => {
 				<Spinner size={'lg'} />
 			</Center>
 		);
-	if (!main || main.categorys.length === 0) return <Text>Нет категорий</Text>;
+	if (!categorys || categorys.length === 0) return <Text>Нет категорий</Text>;
+	if (!subCategory || subCategory.length === 0)
+		return <Text>Нет подкатегорий</Text>;
+	if (!products || products.length === 0) return <Text>Нет Товаров</Text>;
 	return (
 		<Container
 			gap={3}
@@ -86,7 +91,7 @@ const MainCategorys = () => {
 			}
 		>
 			{control.cat &&
-				main.categorys
+				categorys
 					.filter((cat) => cat.id !== controls.subcatId)
 					.map((category) => (
 						<MainCard
@@ -124,7 +129,7 @@ const MainCategorys = () => {
 						/>
 					))}
 			{control.subcat &&
-				main.subCategory
+				subCategory
 					.filter((subcat) => subcat.categoryId === controls.catId)
 					.map((subCategory) => (
 						<MainCard
@@ -147,7 +152,7 @@ const MainCategorys = () => {
 						/>
 					))}
 			{control.isProductSub &&
-				main.products
+				products
 					.filter(
 						(product) =>
 							product.subCategory?.id === controls.subcatId
@@ -176,7 +181,7 @@ const MainCategorys = () => {
 						</React.Fragment>
 					))}
 			{control.isProductCat &&
-				main.products
+				products
 					.filter(
 						(product) => product.category?.id === controls.catId
 					)

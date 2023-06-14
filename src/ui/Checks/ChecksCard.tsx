@@ -3,6 +3,7 @@ import {
 	Card,
 	CardBody,
 	CardFooter,
+	Divider,
 	Icon,
 	Stack,
 	Tag,
@@ -33,7 +34,7 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 			<Icon
 				position="absolute"
 				top={1}
-				right={3}
+				left={3}
 				as={status === 'COMPLETED' ? BsFillCheckCircleFill : MdCancel}
 				fill={status === 'COMPLETED' ? 'green.400' : 'red.400'}
 				boxSize={5}
@@ -74,12 +75,15 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 			{handlIcon(check.status)}
 			<CardBody
 				as={Stack}
-				direction="row"
+				direction="column"
 				alignItems="center"
 				justifyContent="space-between"
+				gap={3}
 			>
-				<Text fontWeight={600}>№ {check.checkNumber}</Text>
-				<Text>{dayjs(check.createdAt).format('DD.MM HH:mm')}</Text>
+				<Stack direction="row">
+					<Text fontWeight={600}>№ {check.checkNumber} от</Text>
+					<Text>{dayjs(check.createdAt).format('DD.MM HH:mm')}</Text>
+				</Stack>
 				<Stack>
 					{check.content.map(({ id, name, quantity, size }) => (
 						<Stack
@@ -103,7 +107,8 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 					{check.totalSum} ₽
 				</Text>
 			</CardBody>
-			<CardFooter pt={0}>
+			<Divider color="gray.400" />
+			<CardFooter>
 				<Button
 					colorScheme="red"
 					w="100%"
