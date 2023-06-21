@@ -80,7 +80,7 @@ export const checksRouter = createTRPCRouter({
 				//create here check for nalog
 				const src = 'https://placehold.co/600x400';
 				await resend.sendEmail({
-					from: 'bounced@spirit-home.ru',
+					from: 'spirit-home.ru',
 					to: input.email,
 					subject: 'Чек',
 					react: Email({ src }),

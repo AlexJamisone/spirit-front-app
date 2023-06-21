@@ -33,8 +33,8 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 		return (
 			<Icon
 				position="absolute"
-				top={1}
-				left={3}
+				top={5}
+				left={2}
 				as={status === 'COMPLETED' ? BsFillCheckCircleFill : MdCancel}
 				fill={status === 'COMPLETED' ? 'green.400' : 'red.400'}
 				boxSize={5}
@@ -71,7 +71,7 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 		);
 	};
 	return (
-		<Card w="100%" fontSize="small" position="relative">
+		<Card fontSize="small" position="relative">
 			{handlIcon(check.status)}
 			<CardBody
 				as={Stack}
@@ -79,11 +79,13 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 				alignItems="center"
 				justifyContent="space-between"
 				gap={3}
+				w="90vw"
 			>
-				<Stack direction="row">
+				<Stack direction="row" textAlign="left" w="100%" ml={8}>
 					<Text fontWeight={600}>№ {check.checkNumber} от</Text>
 					<Text>{dayjs(check.createdAt).format('DD.MM HH:mm')}</Text>
 				</Stack>
+				<Divider />
 				<Stack>
 					{check.content.map(({ id, name, quantity, size }) => (
 						<Stack
@@ -104,11 +106,11 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 					))}
 				</Stack>
 				<Text fontSize="md" fontWeight={600}>
-					{check.totalSum} ₽
+					Итог: {check.totalSum} ₽
 				</Text>
+				<Divider />
 			</CardBody>
-			<Divider color="gray.400" />
-			<CardFooter>
+			<CardFooter pt={0}>
 				<Button
 					colorScheme="red"
 					w="100%"

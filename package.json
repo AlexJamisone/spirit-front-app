@@ -13,6 +13,7 @@
 		"precommit": "npm run prettier && npm run typecheck && git add . && git commit"
 	},
 	"dependencies": {
+		"@chakra-ui/next-js": "^2.1.4",
 		"@chakra-ui/react": "^2.7.0",
 		"@clerk/nextjs": "^4.19.1",
 		"@emotion/react": "^11.11.1",

@@ -1,3 +1,4 @@
+import { Image } from '@chakra-ui/next-js';
 import {
 	Card,
 	CardBody,
@@ -14,9 +15,9 @@ import type {
 	SubCategory,
 } from '@prisma/client';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { MdDelete } from 'react-icons/md';
 import { useMainContext } from '~/context/mainContext';
+import { env } from '~/env.mjs';
 import InSelectItem from '~/ui/Main/InSelectItem';
 
 type MainCardProps = {
@@ -72,12 +73,13 @@ const MainCard = ({ category, onClick, product }: MainCardProps) => {
 			{product ? (
 				<CardHeader mx="auto" my={0}>
 					<Image
-						width={80}
+						width={81}
 						height={50}
 						alt={product.name}
-						src={`${process.env.NEXT_PUBLIC_IMAGE_URL as string}${
+						src={`${env.NEXT_PUBLIC_UPLOADTHING_URL}${
 							product.image[0] as string
 						}`}
+						quality={20}
 					/>
 				</CardHeader>
 			) : null}

@@ -2,7 +2,8 @@ name: Prettier
 on: [push, pull_request]
 
 env:
-    DATABASE_URL: 'https://fake.com'
+  DATABASE_URL: 'https://fake.com'
+    
 
 jobs:
     build:

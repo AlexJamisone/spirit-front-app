@@ -26,7 +26,7 @@ const config = {
 	},
 	swcMinify: true,
 	images: {
-		domains: ['idmxkvjyjiiaohfdbsef.supabase.co']
+		domains: ['utfs.io']
 	},
 };
 export default config;
