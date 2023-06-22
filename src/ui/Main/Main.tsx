@@ -79,7 +79,11 @@ const Main = ({ user, categorys, checks }: MainProps) => {
 					{categorys}
 					{control.checks && checks}
 					{control.success && <Succsess />}
-					<Stack mx={5}>{control.isCheckout && <Checkout />}</Stack>
+					<Stack mx={5}>
+						{control.isCheckout && (
+							<Checkout checkPrint={<Checkout.SendCheck />} />
+						)}
+					</Stack>
 					{items.products.items.length !== 0 &&
 						!control.success &&
 						!control.checks && <CheckoutAction />}

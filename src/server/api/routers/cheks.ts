@@ -1,9 +1,14 @@
+import { TRPCError } from '@trpc/server';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { z } from 'zod';
+import { env } from '~/env.mjs';
 import { adminProcedure, createTRPCRouter } from '~/server/api/trpc';
 import { resend } from '~/server/resend';
 import Email from '~/ui/Email/Email';
+import { createCheck } from '~/utils/createCheck';
+import { getToken } from '~/utils/getToken';
+
 dayjs.locale('ru');
 
 export const checksRouter = createTRPCRouter({
@@ -77,10 +82,33 @@ export const checksRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			if (input.check && input.email) {
-				//create here check for nalog
-				const src = 'https://placehold.co/600x400';
+				const products = input.items.map(
+					({ name, quantity, price, size }) => ({
+						name: name + ' ' + size,
+						quantity,
+						amount: Number(price.toFixed(2)),
+					})
+				);
+				const tk = await getToken();
+				if (!tk)
+					throw new TRPCError({
+						code: 'BAD_REQUEST',
+						message: 'Ошибка с токеном',
+					});
+				const idCheck = await createCheck(
+					products,
+					tk.token,
+					input.totalSum
+				);
+				if (!idCheck)
+					throw new TRPCError({
+						code: 'BAD_REQUEST',
+						message: 'Проблемы в создание чека',
+					});
+				const src = `https://lknpd.nalog.ru/api/v1/receipt/${env.INN}/${idCheck.approvedReceiptUuid}/print`;
+				console.log(src);
 				await resend.sendEmail({
-					from: 'spirit-home.ru',
+					from: 'bounces@spirit-home.ru',
 					to: input.email,
 					subject: 'Чек',
 					react: Email({ src }),

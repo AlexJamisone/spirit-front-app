@@ -13,6 +13,9 @@ export const env = createEnv({
 	server: {
 		DATABASE_URL: z.string().url(),
 		NODE_ENV: z.enum(["development", "test", "production"]),
+		OTP_PHONE: z.string().min(1),
+		INN: z.string(),
+		TOKEN: z.string().min(1)
 	},
 
 	/**
@@ -32,7 +35,10 @@ export const env = createEnv({
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
 		NODE_ENV: process.env.NODE_ENV,
-		NEXT_PUBLIC_UPLOADTHING_URL: process.env.NEXT_PUBLIC_UPLOADTHING_URL
+		NEXT_PUBLIC_UPLOADTHING_URL: process.env.NEXT_PUBLIC_UPLOADTHING_URL,
+		OTP_PHONE: process.env.OTP_PHONE,
+		INN: process.env.INN,
+		TOKEN: process.env.TOKEN
 		// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 	},
 	/**

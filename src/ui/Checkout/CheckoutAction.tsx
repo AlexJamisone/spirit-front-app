@@ -52,6 +52,7 @@ const CheckoutAction = () => {
 			w="100%"
 			alignItems="center"
 			justifyContent="center"
+			bg="white"
 		>
 			{!control.isCheckout && (
 				<Text fontWeight={600}>Итог: {products.totalSum} ₽</Text>
