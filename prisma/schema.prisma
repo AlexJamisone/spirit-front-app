@@ -172,6 +172,7 @@ model Check {
     totalSum    Int
     createdAt   DateTime       @default(now())
     updateAt    DateTime       @updatedAt
+    printId     String?
 }
 
 model CheckContent {

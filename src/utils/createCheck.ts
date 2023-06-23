@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
+import { getToken } from './getToken';
 
 export const createCheck = async (
 	products: { name: string; quantity: number; amount: number }[],
-	token: string,
 	totalAmount: number
-): Promise<{ approvedReceiptUuid: string } | undefined> => {
+): Promise<{ approvedReceiptUuid: string }> => {
 	try {
+		const { token } = await getToken();
 		const req = await fetch('https://lknpd.nalog.ru/api/v1/income', {
 			method: 'POST',
 			headers: {
@@ -28,11 +29,11 @@ export const createCheck = async (
 			}),
 		});
 		const data = (await req.json()) as { approvedReceiptUuid: string };
-		console.log(data);
 		return {
 			approvedReceiptUuid: data.approvedReceiptUuid,
 		};
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 };

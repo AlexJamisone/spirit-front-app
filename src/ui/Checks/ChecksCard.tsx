@@ -8,14 +8,14 @@ import {
 	Stack,
 	Tag,
 	Text,
-	useToast,
+	useDisclosure,
 } from '@chakra-ui/react';
 import type { Check, CheckContent, CheckStatus } from '@prisma/client';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { BsFillCheckCircleFill } from 'react-icons/bs';
 import { MdCancel } from 'react-icons/md';
-import { api } from '~/utils/api';
+import CheckCancelAlert from './CheckCancelAlert';
 dayjs.locale('ru');
 
 type CheckCardProps = {
@@ -25,10 +25,7 @@ type CheckCardProps = {
 };
 
 const ChecksCard = ({ check }: CheckCardProps) => {
-	const { mutate: changeStatus, isLoading } =
-		api.checks.changeStatus.useMutation();
-	const ctx = api.useContext();
-	const toast = useToast();
+	const { isOpen, onClose, onToggle } = useDisclosure();
 	const handlIcon = (status: CheckStatus) => {
 		return (
 			<Icon
@@ -39,35 +36,6 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 				fill={status === 'COMPLETED' ? 'green.400' : 'red.400'}
 				boxSize={5}
 			/>
-		);
-	};
-	const handlCancel = () => {
-		changeStatus(
-			{
-				idCheck: check.id,
-				products: check.content.map(({ qtId, quantity }) => ({
-					qtId,
-					quantity,
-				})),
-			},
-			{
-				onSuccess: () => {
-					void ctx.checks.invalidate();
-					toast({
-						description: `Заказ №${check.checkNumber} успешно отменён`,
-						position: 'top-right',
-						status: 'success',
-						isClosable: true,
-					});
-				},
-				onError: ({ message }) => {
-					toast({
-						description: `${message}`,
-						isClosable: true,
-						status: 'error',
-					});
-				},
-			}
 		);
 	};
 	return (
@@ -115,12 +83,12 @@ const ChecksCard = ({ check }: CheckCardProps) => {
 					colorScheme="red"
 					w="100%"
 					isDisabled={check.status === 'CANCELLED'}
-					onClick={handlCancel}
-					isLoading={isLoading}
+					onClick={onToggle}
 				>
 					Отменить
 				</Button>
 			</CardFooter>
+			<CheckCancelAlert isOpen={isOpen} onClose={onClose} check={check} />
 		</Card>
 	);
 };

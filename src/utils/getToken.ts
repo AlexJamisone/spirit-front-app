@@ -1,13 +1,10 @@
 import { env } from '~/env.mjs';
 
 type TokenApi = {
-	refreshToken: string;
-	refreshTokenExpiresIn: string | null;
 	token: string;
-	tokenExpireIn: Date;
 };
 
-export const getToken = async (): Promise<TokenApi | undefined> => {
+export const getToken = async (): Promise<TokenApi> => {
 	try {
 		const response = await fetch(
 			'https://lknpd.nalog.ru/api/v1/auth/token',
@@ -32,10 +29,10 @@ export const getToken = async (): Promise<TokenApi | undefined> => {
 		);
 		const date = (await response.json()) as TokenApi;
 		return {
-			...date,
 			token: date.token,
 		};
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 };

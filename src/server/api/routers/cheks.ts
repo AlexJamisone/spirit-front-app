@@ -6,6 +6,7 @@ import { env } from '~/env.mjs';
 import { adminProcedure, createTRPCRouter } from '~/server/api/trpc';
 import { resend } from '~/server/resend';
 import Email from '~/ui/Email/Email';
+import { cancelCheck } from '~/utils/cancelCheck';
 import { createCheck } from '~/utils/createCheck';
 import { getToken } from '~/utils/getToken';
 
@@ -38,6 +39,7 @@ export const checksRouter = createTRPCRouter({
 						quantity: z.number(),
 					})
 				),
+				receiptUuid: z.string().nullish(),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -53,6 +55,9 @@ export const checksRouter = createTRPCRouter({
 					},
 				});
 			});
+			if (input.receiptUuid) {
+				await cancelCheck(input.receiptUuid);
+			}
 			return await ctx.prisma.check.update({
 				where: {
 					id: input.idCheck,
@@ -81,39 +86,6 @@ export const checksRouter = createTRPCRouter({
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (input.check && input.email) {
-				const products = input.items.map(
-					({ name, quantity, price, size }) => ({
-						name: name + ' ' + size,
-						quantity,
-						amount: Number(price.toFixed(2)),
-					})
-				);
-				const tk = await getToken();
-				if (!tk)
-					throw new TRPCError({
-						code: 'BAD_REQUEST',
-						message: 'Ошибка с токеном',
-					});
-				const idCheck = await createCheck(
-					products,
-					tk.token,
-					input.totalSum
-				);
-				if (!idCheck)
-					throw new TRPCError({
-						code: 'BAD_REQUEST',
-						message: 'Проблемы в создание чека',
-					});
-				const src = `https://lknpd.nalog.ru/api/v1/receipt/${env.INN}/${idCheck.approvedReceiptUuid}/print`;
-				console.log(src);
-				await resend.sendEmail({
-					from: 'bounces@spirit-home.ru',
-					to: input.email,
-					subject: 'Чек',
-					react: Email({ src }),
-				});
-			}
 			input.items.map(async (prod) => {
 				return await ctx.prisma.quantity.update({
 					where: {
@@ -135,16 +107,54 @@ export const checksRouter = createTRPCRouter({
 					qtId,
 				})
 			);
-			return await ctx.prisma.check.create({
-				data: {
-					totalSum: input.totalSum,
-					content: {
-						createMany: {
-							data: check,
+			if (input.check && input.email) {
+				const productsToCheck = input.items.map(
+					({ name, quantity, price, size }) => ({
+						name: name + ' ' + size,
+						quantity,
+						amount: Number(price.toFixed(2)),
+					})
+				);
+				const tk = await getToken();
+				if (!tk)
+					throw new TRPCError({
+						code: 'BAD_REQUEST',
+						message: 'Ошибка с токеном',
+					});
+				const { approvedReceiptUuid } = await createCheck(
+					productsToCheck,
+					input.totalSum
+				);
+				const src = `https://lknpd.nalog.ru/api/v1/receipt/${env.INN}/${approvedReceiptUuid}/print`;
+				await resend.sendEmail({
+					from: 'bounces@spirit-home.ru',
+					to: input.email,
+					subject: 'Чек',
+					react: Email({ src }),
+				});
+				return await ctx.prisma.check.create({
+					data: {
+						totalSum: input.totalSum,
+						content: {
+							createMany: {
+								data: check,
+							},
+						},
+						printId: approvedReceiptUuid,
+					},
+				});
+			} else {
+				return await ctx.prisma.check.create({
+					data: {
+						totalSum: input.totalSum,
+						content: {
+							createMany: {
+								data: check,
+							},
 						},
 					},
-				},
-			});
+				});
+			}
 		}),
 	getRevenue: adminProcedure.output(z.number()).query(async ({ ctx }) => {
 		const checks = await ctx.prisma.check.findMany({
